@@ -84,6 +84,7 @@ const RegistrationForm = () => {
             {success ? (
                 <section>
                     <h1>Registration Successful</h1>
+                    
                     <p>
                         <Link to="/login">Sign In</Link>
                     </p>
