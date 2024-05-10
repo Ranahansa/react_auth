@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
+import { IoIosClose } from "react-icons/io";
+import { GrStatusGood } from "react-icons/gr";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -104,13 +106,10 @@ const RegistrationForm = () => {
                                 className="block mb-2 font-bold text-gray-700"
                             >
                                 Username :
-                                <span className={validName ? "valid" : "hide"}>
-                                    <span className="ml-1 text-green-500">✔</span>
-                                </span>
+                                    <IoIosClose className={validName ? "valid" : "hide"} />
+                                    <GrStatusGood className={!validName && user ? "invalid" : "hide"} />
 
-                                <span className={validName || !user ? "hide" : "invalid"}>
-                                    <span className="ml-1 text-red-500">❌</span>
-                                </span>
+                                
                             </label>
                             <input
                                 type="text"
@@ -148,9 +147,9 @@ const RegistrationForm = () => {
                             <input
                                 type="password"
                                 id="password"
-                                ref={passwordRef}
                                 autoComplete="off"
                                 onChange={(e) => setPwd(e.target.value)}
+                                value={pwd}
                                 required
                                 aria-invalid={validPwd ? "false" : "true"}
                                 aria-describedby="pwdnote"
@@ -180,8 +179,9 @@ const RegistrationForm = () => {
                             </label>
                             <input
                                 type="password"
-                                id="confirmPassword"
+                                id="confirm_pwd"
                                 onChange={(e) => setMatchPwd(e.target.value)}
+                                value={matchPwd}
                                 required
                                 aria-invalid={validMatch ? "false" : "true"}
                                 aria-describedby="confirmnote"
@@ -204,7 +204,7 @@ const RegistrationForm = () => {
                             </button>
                         </div>
                     </form>
-                    <p>
+                    <p className='text-center text-gray-500'>
                         Already have an account?
                         <Link to="/login" className="ml-1 text-blue-500 transition-colors duration-300 hover:text-blue-800">
                             Login
