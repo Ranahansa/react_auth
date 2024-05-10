@@ -106,10 +106,12 @@ const RegistrationForm = () => {
                                 className="block mb-2 font-bold text-gray-700"
                             >
                                 Username :
-                                    {validName ? (
-                                        <span className="valid"> ✔</span>
-                                    ) : (
-                                        <span className="invalid">❌</span>
+                                    {user && (
+                                        validName ? (
+                                            <span className="valid">✔</span>
+                                        ) : (
+                                            <span className="invalid">❌</span>
+                                        )
                                     )}
                             </label>
                                 
@@ -140,10 +142,12 @@ const RegistrationForm = () => {
                                 className="block mb-2 font-bold text-gray-700"
                             >
                                 Password :
-                                    {validPwd ? (
-                                        <span className="valid"> ✔</span>
-                                    ) : (
-                                        <span className="invalid">❌</span>
+                                    {pwd && (
+                                        validPwd ? (
+                                            <span className="valid">✔</span>
+                                        ) : (
+                                            <span className="invalid">❌</span>
+                                        )
                                     )}
                             </label>
                             <input
@@ -159,7 +163,7 @@ const RegistrationForm = () => {
                                 onBlur={() => setPwdFocus(false)}
                                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                             />
-                            {pwdFocus && !validPwd && (
+                            {pwdFocus && pwd && !validPwd && (
                                 <p id="pwdnote" className="instructions">
                                     <p className="text-xs italic text-red-500">Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and be between 8-24 characters long.</p>
                                 </p>
@@ -171,13 +175,15 @@ const RegistrationForm = () => {
                                 htmlFor="confirmPassword"
                                 className="block mb-2 font-bold text-gray-700"
                             >
-                                Confirm Password
+                                Confirm Password :
 
-                                {validMatch && matchPwd ?  (
-                                    <span className="valid"> ✔</span>
-                                ) : (
-                                    <span className="invalid">❌</span>
-                                )}
+                                    {matchPwd && (
+                                        validMatch && matchPwd ? (
+                                            <span className="valid">✔</span>
+                                        ) : (
+                                            <span className="invalid">❌</span>
+                                        )
+                                    )}
                             </label>
                             <input
                                 type="password"
@@ -190,9 +196,9 @@ const RegistrationForm = () => {
                                 aria-describedby="confirmnote"
                                 onFocus={() => setMatchFocus(true)}
                                 onBlur={() => setMatchFocus(false)}
-                                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                                    className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline disabled:cursor-not-allowed"
                             />
-                            {matchFocus && !validMatch && (
+                            {matchFocus && !validMatch && matchPwd && (
                                 <p id="confirmnote" className="instructions">
                                     <p className="text-xs italic text-red-500">Passwords do not match.</p>
                                 </p>
