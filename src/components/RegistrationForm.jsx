@@ -92,10 +92,11 @@ const RegistrationForm = () => {
                     </p>
                 </section>
             ) : (
-                <section>
+                <section className='mt-10'>
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
                         {errMsg}
                     </p>
+                    <h1 className="text-4xl font-bold text-center">Registration Form</h1>
                     <form
                         onSubmit={handleSubmit}
                         className="max-w-md px-8 pt-6 pb-8 mx-auto mt-10 mb-4 bg-white rounded shadow-md"
