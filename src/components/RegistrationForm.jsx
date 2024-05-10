@@ -4,7 +4,7 @@ import axios from '../api/axios';
 import { IoIosClose } from "react-icons/io";
 import { GrStatusGood } from "react-icons/gr";
 
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = '/register';
 
@@ -106,11 +106,13 @@ const RegistrationForm = () => {
                                 className="block mb-2 font-bold text-gray-700"
                             >
                                 Username :
-                                    <IoIosClose className={validName ? "valid" : "hide"} />
-                                    <GrStatusGood className={!validName && user ? "invalid" : "hide"} />
-
-                                
+                                    {validName ? (
+                                        <span className="valid"> ✔</span>
+                                    ) : (
+                                        <span className="invalid">❌</span>
+                                    )}
                             </label>
+                                
                             <input
                                 type="text"
                                 id="username"
@@ -125,9 +127,11 @@ const RegistrationForm = () => {
                                 onBlur={() => setUserFocus(false)}
                                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                             />
-                            <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
-                                <p className="text-xs italic text-red-500">Please enter a valid username.</p>
-                            </p>
+                            {userFocus && user && !validName && (
+                                <p id="uidnote" className="instructions">
+                                    <p className="text-xs italic text-red-500">Please enter a valid username.</p>
+                                </p>
+                            )}
                         </div>
 
                         <div className="mb-4">
@@ -136,13 +140,11 @@ const RegistrationForm = () => {
                                 className="block mb-2 font-bold text-gray-700"
                             >
                                 Password :
-                                <span className={validPwd ? "valid" : "hide"}>
-                                        <span className="ml-1 text-red-500">✔</span>
-                                </span>
-
-                                <span className={validPwd || !pwd ? "hide" : "invalid"}>
-                                    <span className="ml-1 text-red-500">❌</span>
-                                </span>
+                                    {validPwd ? (
+                                        <span className="valid"> ✔</span>
+                                    ) : (
+                                        <span className="invalid">❌</span>
+                                    )}
                             </label>
                             <input
                                 type="password"
@@ -157,9 +159,11 @@ const RegistrationForm = () => {
                                 onBlur={() => setPwdFocus(false)}
                                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                             />
-                            <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
-                                <p className="text-xs italic text-red-500">Please enter a valid password.</p>
-                            </p>
+                            {pwdFocus && !validPwd && (
+                                <p id="pwdnote" className="instructions">
+                                    <p className="text-xs italic text-red-500">Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and be between 8-24 characters long.</p>
+                                </p>
+                            )}
                         </div>
 
                         <div className="mb-6">
@@ -169,19 +173,18 @@ const RegistrationForm = () => {
                             >
                                 Confirm Password
 
-                                <span className={validMatch && matchPwd ? "valid" : "hide"}>
-                                        <span className="ml-1 text-red-500">✔</span>
-                                </span>
-
-                                <span className={validMatch || !matchPwd ? "hide" : "invalid"}>
-                                    <span className="ml-1 text-red-500">❌</span>
-                                </span>
+                                {validMatch && matchPwd ?  (
+                                    <span className="valid"> ✔</span>
+                                ) : (
+                                    <span className="invalid">❌</span>
+                                )}
                             </label>
                             <input
                                 type="password"
                                 id="confirm_pwd"
                                 onChange={(e) => setMatchPwd(e.target.value)}
                                 value={matchPwd}
+                                disabled={!validPwd}
                                 required
                                 aria-invalid={validMatch ? "false" : "true"}
                                 aria-describedby="confirmnote"
@@ -189,16 +192,18 @@ const RegistrationForm = () => {
                                 onBlur={() => setMatchFocus(false)}
                                 className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                             />
-                            <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                                <p className="text-xs italic text-red-500">Must match the first password input field.</p>
-                            </p>
+                            {matchFocus && !validMatch && (
+                                <p id="confirmnote" className="instructions">
+                                    <p className="text-xs italic text-red-500">Passwords do not match.</p>
+                                </p>
+                            )}
                         </div>
 
                         <div className="flex items-center justify-between">
                             <button
-                                disabled={!validName || !validPwd || !validMatch ? true : false}
                                 type="submit"
-                                className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+                                disabled={!validName || !validPwd || !validMatch}
+                                    className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Register
                             </button>
