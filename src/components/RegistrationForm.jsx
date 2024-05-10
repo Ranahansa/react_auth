@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
-import { IoIosClose } from "react-icons/io";
-import { GrStatusGood } from "react-icons/gr";
 
 const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -11,6 +9,7 @@ const REGISTER_URL = '/register';
 const RegistrationForm = () => {
     const userRef = useRef();
     const errRef = useRef();
+    const navigate = useNavigate();
 
     const [user, setUser] = useState('');
     const [validName, setValidName] = useState(false);
@@ -62,12 +61,14 @@ const RegistrationForm = () => {
             });
             console.log(response?.data);
             console.log(response?.access_token);
-            console.log(JSON.stringify(response));
-            setSuccess(true);
+            console.log(JSON.stringify(response)); 
             
+            setSuccess(true);
             setUser('');
             setPwd('');
             setMatchPwd('');
+            
+            navigate('/login');
             
         } catch (err) {
             if (!err?.response) {
@@ -85,11 +86,8 @@ const RegistrationForm = () => {
         <>
             {success ? (
                 <section>
-                    <h1>Registration Successful</h1>
-                    
-                    <p>
-                        <Link to="/login">Sign In</Link>
-                    </p>
+                    <h1>Registration Successful!</h1>
+                    <p>You will be redirected to the login page shortly.</p>
                 </section>
             ) : (
                 <section className='mt-10'>
