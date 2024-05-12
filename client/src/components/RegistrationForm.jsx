@@ -54,6 +54,10 @@ const RegistrationForm = () => {
         }
 
         try {
+
+            console.log('Username:', user);
+            console.log('Password:', pwd);
+
             const response = await axios.post(
                 REGISTER_URL,
                 JSON.stringify({ user, pwd }),
