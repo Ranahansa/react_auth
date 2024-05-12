@@ -54,38 +54,34 @@ const RegistrationForm = () => {
         }
 
         try {
-            const response = await axios.post(REGISTER_URL, JSON.stringify({ user, pwd }), 
-            {
-                headers: { 'Content-Type': 'application/json' },
-                withCredentials: true,
-            });
-            console.log(response?.data);
-            console.log(response?.access_token);
-            console.log(JSON.stringify(response)); 
-            
-            setSuccess(true);
-            setUser('');
-            setPwd('');
-            setMatchPwd('');
-            
-            navigate('/login');
-            
+            const response = await axios.post(
+                REGISTER_URL,
+                JSON.stringify({ user, pwd }),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true,
+                }
+            );
+
+            if (response.status === 200) {
+                setSuccess(true);
+                setUser('');
+                setPwd('');
+                setMatchPwd('');
+
+                navigate('/login');
+            } else {
+                setErrMsg(response.data.message || 'Registration Failed');
+            }
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
+            } else if (err.response?.status === 409) {
+                setErrMsg('Username Taken');
+            } else if (err.response?.status === 400) {
+                setErrMsg('Invalid Request Body');
             } else {
-                console.error('Registration Error:', err.response.data);
-                console.error('Registration Error Status:', err.response.status);
-
-                if (err.response?.status === 409) {
-                    setErrMsg('Username Taken');
-                } else if (err.response?.status === 400) {
-                    setErrMsg('Invalid Request Body');
-                } else if (err.response?.status === 500) {
-                    setErrMsg('Internal Server Error');
-                } else {
-                    setErrMsg(`Registration Failed: ${err.response.data.message || 'Please try again later.'}`);
-                }
+                setErrMsg('Registration Failed');
             }
             errRef.current.focus();
         }
