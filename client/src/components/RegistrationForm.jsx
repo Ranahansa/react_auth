@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 
-const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
+const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{2,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = '/register';
 
@@ -73,10 +73,19 @@ const RegistrationForm = () => {
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
-            } else if (err.response?.status === 409) {
-                setErrMsg('Username Taken');
             } else {
-                setErrMsg('Registration Failed');
+                console.error('Registration Error:', err.response.data);
+                console.error('Registration Error Status:', err.response.status);
+
+                if (err.response?.status === 409) {
+                    setErrMsg('Username Taken');
+                } else if (err.response?.status === 400) {
+                    setErrMsg('Invalid Request Body');
+                } else if (err.response?.status === 500) {
+                    setErrMsg('Internal Server Error');
+                } else {
+                    setErrMsg(`Registration Failed: ${err.response.data.message || 'Please try again later.'}`);
+                }
             }
             errRef.current.focus();
         }
