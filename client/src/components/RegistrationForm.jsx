@@ -194,7 +194,7 @@ const RegistrationForm = () => {
                                 id="confirm_pwd"
                                 onChange={(e) => setMatchPwd(e.target.value)}
                                 value={matchPwd}
-                                disabled={!validPwd}
+                                disabled={!validPwd || !user}
                                 required
                                 aria-invalid={validMatch ? "false" : "true"}
                                 aria-describedby="confirmnote"
