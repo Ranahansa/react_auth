@@ -1,12 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import AuthContext from '../context/AuthProvider'
+import axios from '../api/axios'
+
+const LOGIN_URL = '/login'
 
 const Login = () => {
+
+    const { setAuth } = useContext(AuthContext)
+
     const userRef = useRef()
     const errRef = useRef()
+
+
     const [user, setUser] = useState('')
-    const [password, setPassword] = useState('')
+    const [pwd, setPwd] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState(false)
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         userRef.current.focus()
@@ -14,23 +26,46 @@ const Login = () => {
 
     useEffect(() => {
         setError('')
-    }, [user, password])
+    }, [user, pwd])
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        if (user === 'admin' && password === 'password') {
-            setSuccess(true)
-            setError('')
-        } else {
-            setError('Invalid username or password')
+        try {
+            const response = await axios.post(LOGIN_URL, JSON.stringify({ user, pwd }), {
+                headers: { 'Content-Type': 'application/json' },
+                withCredentials: true
+            })
+
+            const { accessToken, roles } = response?.data || {}
+
+            if (accessToken && roles) {
+                setAuth({ user, pwd, roles, accessToken })
+                setUser('')
+                setPwd('')
+                setSuccess(true)
+                navigate('/premium')
+            } else {
+                setError('Invalid response from the server')
+            }
+        } catch (err) {
+            if (!err?.response) {
+                setError('No Server Response')
+            } else if (err.response?.status === 400) {
+                setError('Missing Username or Password')
+            } else if (err.response?.status === 401) {
+                setError('Unauthorized')
+            } else {
+                setError('Login Failed')
+            }
+            errRef.current.focus()
         }
     }
 
     return (
         <>
             {success ? (
-                <section className="text-center mt-20">
-                    <h1 className="text-2xl font-bold mb-4">You are logged in!</h1>
+                <section className="mt-20 text-center">
+                    <h1 className="mb-4 text-2xl font-bold">You are logged in!</h1>
                     <p>
                         <a href="/" className="text-blue-500 hover:text-blue-700">
                             Go to Home
@@ -46,7 +81,7 @@ const Login = () => {
                     >
                         {error}
                     </p>
-                    <h1 className="text-2xl font-bold mb-4">Sign In</h1>
+                    <h1 className="mb-4 text-2xl font-bold">Sign In</h1>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label htmlFor="username" className="block font-medium">
@@ -60,7 +95,7 @@ const Login = () => {
                                 onChange={(e) => setUser(e.target.value)}
                                 value={user}
                                 required
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                         <div>
@@ -70,15 +105,15 @@ const Login = () => {
                             <input
                                 type="password"
                                 id="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                                value={password}
+                                onChange={(e) => setPwd(e.target.value)}
+                                value={pwd}
                                 required
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-blue-500 text-white rounded-md py-2 hover:bg-blue-600 transition-colors"
+                            className="w-full py-2 text-white transition-colors bg-blue-500 rounded-md hover:bg-blue-600"
                         >
                             Sign In
                         </button>

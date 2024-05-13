@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const connectDB = require("./lib/database");
 const User = require("./models/User");
 
@@ -57,6 +58,50 @@ app.post("/register", async (req, res) => {
         await newUser.save();
 
         res.status(200).json({ message: "Registration Successful" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+// Generate access token
+const generateAccessToken = (user, userId) => {
+    const payload = {
+        user,
+        userId,
+    }
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "15m",
+    })
+
+    return accessToken
+}
+
+// Login endpoint
+app.post("/login", async (req, res) => {
+    const { user, pwd } = req.body;
+
+    try {
+        // Find the user in the database
+        const foundUser = await User.findOne({ user });
+
+        if (!foundUser) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        // Compare the provided password with the hashed password in the database
+        const isPasswordMatch = await bcrypt.compare(pwd, foundUser.pwd);
+
+        if (!isPasswordMatch) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        // Generate an access token
+        const accessToken = generateAccessToken(foundUser.user, foundUser._id);
+
+        // Send the access token and user roles in the response
+        const roles = foundUser.roles || [];
+        res.json({ accessToken, roles });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Internal Server Error" });

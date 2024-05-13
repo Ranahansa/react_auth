@@ -4,6 +4,7 @@ import Navigation from './components/Navigation'
 import Home from './components/Home'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RegistrationForm from './components/RegistrationForm';
+import Premium from './components/Premium';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/premium" element={<Premium />} />
         </Routes>
       </div>
       </Router>
